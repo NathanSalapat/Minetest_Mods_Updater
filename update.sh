@@ -16,4 +16,9 @@ done            #Once all directories have cycled through this ends the loop
 
 #rsync GIT_LOCATION MINETEST_MOD_LOCATION
 
-#Rename the folders that need it. This must be filled out manually.
+#Move to the minetest/mods folder Please fill this out for your computer, currently is the default
+cd ~/.minetest/mods
+
+#Rename the folders that need it. This must be filled out manually. Basically removes the folder with the right name, and then renames the folder with the wrong name to the right name
+rm -rf Correct_Folder_Name
+mv Git_Folder_Name Correct_Folder_Name
