@@ -21,6 +21,8 @@ rsync -r '' ~/.minetest/mods
 #Move to the minetest/mods folder this should be default on all installs.
 cd ~/.minetest/mods
 
+#Read an external file to rename the folders that need it. This file will be located outside of this git repo so it won't change unless you change it.
+
 #Rename the folders that need it. This must be filled out manually. Basically removes the folder with the right name, and then renames the folder with the wrong name to the right name
 #rm -rf Correct_Folder_Name
 #mv Git_Folder_Name Correct_Folder_Name
