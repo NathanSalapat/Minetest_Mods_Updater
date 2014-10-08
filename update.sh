@@ -22,4 +22,6 @@ rsync -r '' ~/.minetest/mods
 cd ~/.minetest/mods
 
 #Run an external script to find out which files to rename and do it.
-sh ./rename.sh
+if [[ -f ./rename.sh ]]; then
+	exec ./rename.sh
+fi
