@@ -3,7 +3,16 @@ Minetest_Mods_Updater
 
 A bash script for LINUX that automatically updates your minetest mods
 
-To use, create a directory where you will put all your git cloned folders for mods. Git Clone the mods into said folder. Add Update.sh to that folder, and change the permissions to be executable, if needed. Change the rsync locations to be the location you are git cloning into and your mods directory. To update your mods just run the script, or create a cron job to execute the script for you. I personally have it run every morning at four am.
+To use, create a directory where you will git clone mods. Make sure to clone this to the same location.
+Call the updater with update.sh -s /home/yourname/gitclone/ -d /home/yourname/.minetest/mods Replace the yourname and gitclone as appropriate.
+
+To run the script as a cron job just add it like this, open a terminal and type crontab -e
+Your crontab will open, then add the following line.
+
+* 4 * * * /home/yourname/gitclone/Minetest_Mods_Updater/update.sh >/dev/null 2>&1
+
+Of course you can change when the job runs. If you aren't familiar with that syntax visit this page: http://www.howtoforge.com/a-short-introduction-to-cron-jobs
+
 
 The script now calls another script, which needs to be located in ~/.minetest/mods and called rename.sh
 Sample script for the rename script:
