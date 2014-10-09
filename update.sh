@@ -2,10 +2,11 @@
 
 #This script should pull a list of the directories in the parent folder, cd into each folder issue the Git Update command, update the files, move back to the parent directory and repeat until all files have been updated, then copy the files to the main mod directory.
 
-# Path to the directory with mods
-MODS_PATH=.
-#Move to the parent directory so the script can self update.
+#Move up to parent folder
 cd ..
+
+#Grab the path of the root folder all mods are in.
+MODS_PATH=`pwd`
 
 find $MODS_PATH -maxdepth 1 -type d -print0 | while read -d $'\0' dir
 do
