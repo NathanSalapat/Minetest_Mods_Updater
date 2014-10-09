@@ -65,16 +65,8 @@ do
 done
 
 # update the script
-if [[ -t 1 ]]; then # if stdout is terminal
-	# optionally, ask before updating
-	if [[ ${AUTO_UPDATE} -eq 0 ]]; then
-		printf 'Do you wish to update the script?\nType Y to update: '
-		read yn
-		[[ $yn == [Yy]* ]] \
-			&& update_self
-	else
-		update_self
-	fi
+if [[ ${AUTO_UPDATE} -eq 1 ]]; then
+	update_self
 fi
 
 find "${MODS_PATH}" -maxdepth 1 -type d -print0 | while read -d $'\0' dir
