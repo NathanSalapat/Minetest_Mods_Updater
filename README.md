@@ -11,7 +11,3 @@ rm -rf mesecons
 mv minetest-mod-mesecons mesecons
 
 Just duplicate these two lines as you need to. The first line deletes the original folder, and the second renames the folder from GIT to the name the mod needs.
-
-TODO:
-Add a bit more documentation.
-Add a log output that prints the date and what mods were updated.
