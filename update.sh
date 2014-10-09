@@ -21,7 +21,7 @@ do
 done            #Once all directories have cycled through this ends the loop
 
 #Now that all files are updated copy them to the main directory.
-rsync -r '' ~/.minetest/mods
+#rsync -r '' ~/.minetest/mods
 
 #Move to the minetest/mods folder this should be default on all installs.
 cd ~/.minetest/mods
