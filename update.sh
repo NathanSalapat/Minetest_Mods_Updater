@@ -93,7 +93,7 @@ do
 done
 
 # Now that all files are updated copy them to the main directory.
-rsync -r  \
+rsync -r --exclude='.git' \
 	"${MODS_PATH}" \
 	"${DESTINATION_PATH}"
 
