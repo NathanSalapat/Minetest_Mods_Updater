@@ -5,6 +5,7 @@
 # then copy the files to the main mod directory.
 
 SCRIPT_PATH=$(dirname "${BASH_SOURCE[0]}")
+RSYNC_CMD="rsync -r --exclude='.git' --stats"
 
 show_help() {
 	printf 'Usage: update.sh -s "path to mods" -d "destination"\n'
@@ -29,12 +30,39 @@ log() {
 		printf '%s\n' "$line"
 	fi >&2
 }
+
 update_self() {
 	log INFO 'Updating the script'
+	dry_run $FUNCNAME && return
 	cd ${SCRIPT_PATH}
 	git pull \
 		&& log INFO 'OK' \
 		|| log WARN 'fail'
+}
+
+update_mod() {
+	dry_run $FUNCNAME && return 0
+	# check if there is remote-tracking branch
+	if git branch -v | grep 'remote-tracking'; then
+		# placeholder for interactive
+		# merging of forks
+		:
+	else
+		if git pull; then
+			# TODO add check if it actually updated
+			log INFO 'OK'
+		else
+			log ERROR 'pull failed'
+		fi
+	fi
+}
+
+dry_run() {
+	if [[ $DRY_RUN -eq 1 ]]; then
+		log INFO "dry run (called from $1)"
+		return 0
+	fi
+	return 1
 }
 
 # Set variables accordingly to passed arguments or show help
@@ -47,15 +75,25 @@ do
 		  exit 0
 		  ;;
 		-s | --source)
-		  MODS_PATH="${2}"
+		  MODS_PATH="${2}/"
+		  [[ ! -d "${2}" ]] \
+			  && log ERROR 'Source directory does not exist' \
+			  && exit 1
 		  shift 2
 		  ;;
 		-d | --destination)
-		  DESTINATION_PATH="${2}"
+		  DESTINATION_PATH="${2}/"
+		  [[ ! -d "${2}" ]] \
+			  && log ERROR 'Destination directory does not exist' \
+			  && exit 1
 		  shift 2
 		  ;;
-		-u | --update)
+		-u | --update) # update the script
 		  AUTO_UPDATE=1
+		  shift
+		  ;;
+		--dry-run) # test run without changes
+		  DRY_RUN=1
 		  shift
 		  ;;
 		*)
@@ -63,6 +101,7 @@ do
 		  ;;
 	esac
 done
+dry_run && RSYNC_CMD="${RSYNC_CMD} --dry-run"
 
 # update the script
 if [[ ${AUTO_UPDATE} -eq 1 ]]; then
@@ -76,31 +115,18 @@ do
 	[[ ! -d .git ]] && continue
 
 	log INFO "Updating mod $(basename "$dir"):"
-	# check if there is remote-tracking branch
-	if git branch -v | grep 'remote-tracking'; then
-		# placeholder for interactive
-		# merging of forks
-		:
-	else
-		if git pull; then
-			# TODO add check if it actually updated
-			log INFO 'OK'
-			git reflog | head -3
-		else
-			log ERROR 'pull failed'
-		fi
-	fi
+	update_mod
 done
 
 # Now that all files are updated copy them to the main directory.
-rsync -r --exclude='.git' \
-	"${MODS_PATH}" \
-	"${DESTINATION_PATH}"
+eval "${RSYNC_CMD} '${MODS_PATH}' '${DESTINATION_PATH}'"
 
 #Move to the minetest/mods folder this should be default on all installs.
 cd "${DESTINATION_PATH}"
 
 #Run an external script to find out which files to rename and do it.
-if [[ -f ${SCRIPT_PATH}/rename.sh ]]; then
-	exec ${SCRIPT_PATH}/rename.sh
+if [[ -f ${DESTINATION_PATH}/rename.sh ]]; then
+	dry_run 'rename' && exit 0
+	exec ${DESTINATION_PATH}/rename.sh \
+		|| log ERROR 'cannot execute rename script'
 fi
